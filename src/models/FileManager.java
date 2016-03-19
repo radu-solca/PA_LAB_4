@@ -6,13 +6,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.*;
 
-
 public class FileManager{
     
     private File currentDir; //can only be a directory.
 
-    public FileManager() {
-        currentDir = new File(".");
+    /**
+     * Initializes the application's working directory with the provided path.
+     * Note that the path is relative to the application's root directory.
+     * 
+     * If the provided directory does not exist, the function will create it. If this fails, a IOException is thrown.
+     * 
+     * @param path
+     * @throws IOException 
+     */
+    public FileManager(String path) throws IOException {
+        
+        path = "./" + path;
+        
+        currentDir = new File(path);
+        if(!currentDir.exists()||!currentDir.isDirectory()){
+            if(!currentDir.mkdirs()){
+                throw new IOException("Could not create directory " + currentDir.getAbsolutePath());
+            }
+        }
     } 
     
     // directory methods:
@@ -73,11 +89,11 @@ public class FileManager{
     
     // file methods:
     
-    public void getInfo(String path) throws FileNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public String getInfo(String path) throws FileNotFoundException {
+        return "eat shit";
     }
     
-    public List<File> find(Pattern pattern) {
+    public List<File> find(Matcher matcher) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
@@ -92,7 +108,7 @@ public class FileManager{
     //auxiliary methods:
     
     private final FilenameFilter audioFilenameFilter = (File dir, String name) -> {
-        String regex = ".(mp3|wav|flac)\\z";
+        String regex = ".([mM][pP]3|[wW][aA][vV]|[fF][lL][aA][cC])\\z";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(name);
         
@@ -101,7 +117,7 @@ public class FileManager{
 
     
     public void DEBUG_print(){
-        System.out.println(currentDir.getPath());
+        System.out.println(currentDir.getAbsolutePath());
         //System.out.println(Arrays.toString(currentDir.list()));
     }
 
