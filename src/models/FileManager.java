@@ -1,24 +1,49 @@
 package models;
 
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.*;
 
 
-public class FileManager {
+public class FileManager{
     
-    private File selectedItem; //the selected item - can be a directory or a file.
+    private File currentDir; //can only be a directory.
 
     public FileManager() {
-        selectedItem = new File(".");
+        currentDir = new File(".");
     } 
     
-    public void cd(String path){
-        this.selectedItem = new File(selectedItem, path);
+    public void changeDir(String path) throws FileNotFoundException {
+        File aux = new File(currentDir, path);
+        if(!aux.exists()){
+            throw new FileNotFoundException("\"" + aux.getAbsolutePath() + "\" does not exist.");
+        }
+        else
+        if(!aux.isDirectory()){
+            throw new FileNotFoundException("\"" + aux.getAbsolutePath() + "\" is not a directory.");
+        }
+        else{
+            this.currentDir = aux;
+        }
+    }
+
+    public void getInfo(String path) throws FileNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    public void DEBUG_print(){
-        System.out.println(selectedItem.getPath());
-        
-        System.out.println(Arrays.toString(selectedItem.list()));
+    public File getFile(String path) throws FileNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    public List<File> find(Pattern pattern) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+        
+    public void DEBUG_print(){
+        System.out.println(currentDir.getPath());
+        
+        System.out.println(Arrays.toString(currentDir.list()));
+    }
+
 }
