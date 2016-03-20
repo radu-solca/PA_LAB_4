@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.*;
+import org.apache.tika.exception.*;
+import org.apache.tika.metadata.*;
+import org.apache.tika.parser.*;
+import org.apache.tika.sax.*;
+import org.xml.sax.SAXException;
+
 
 public class FileManager{
     
@@ -89,8 +95,36 @@ public class FileManager{
     
     // file methods:
     
-    public String getInfo(String path) throws FileNotFoundException {
-        return "eat shit";
+    public String getInfo(String path) throws FileNotFoundException, IOException, SAXException, TikaException {
+        File file = new File(currentDir, path);
+        String info = "";
+               
+        try(FileInputStream inputstream = new FileInputStream(file)) {
+            if(!file.exists()){
+                throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
+            }
+            else
+            if(!file.isFile()){
+                throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" is not a file.");
+            }
+            
+            //Parser method parameters
+            Parser parser = new AutoDetectParser();
+            BodyContentHandler handler = new BodyContentHandler();
+            Metadata metadata = new Metadata();
+            ParseContext context = new ParseContext();
+
+            parser.parse(inputstream, handler, metadata, context);            
+            
+            info += "Title: " + (metadata.get("title") == null ? "N/A" : metadata.get("title")) + "\n";
+            info += "Genre: " + (metadata.get("xmpDM:genre") == null ? "N/A" : metadata.get("xmpDM:genre")) + "\n";
+            info += "Artist: " + (metadata.get("xmpDM:artist") == null ? "N/A" : metadata.get("xmpDM:artist")) + "\n";
+            info += "Album: " + (metadata.get("xmpDM:album") == null ? "N/A" : metadata.get("xmpDM:album")) + "\n";
+            info += "Release Date: " + (metadata.get("xmpDM:releaseDate") == null ? "N/A" : metadata.get("xmpDM:releaseDate")) + "\n";
+            
+        }
+        
+        return info;
     }
     
     public List<File> find(Matcher matcher) {
