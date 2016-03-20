@@ -1,5 +1,6 @@
 package models;
 
+import java.awt.Desktop;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -125,6 +126,26 @@ public class FileManager{
         }
         
         return info;
+    }
+    
+    public void play(String path) throws IOException{
+        File file = new File(currentDir, path);  
+        if(!file.exists()){
+            throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
+        }
+        else
+        if(!file.isFile()){
+            throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" is not a file.");
+        }
+        
+        Desktop desktop = null;
+        
+        if (Desktop.isDesktopSupported()) {
+            desktop = Desktop.getDesktop();
+        }
+        if (desktop != null){
+            desktop.open(file);
+        }
     }
     
     public List<File> find(Matcher matcher) {
