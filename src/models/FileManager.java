@@ -78,6 +78,9 @@ public class FileManager{
         List<File> list = new ArrayList<>();
         
         File selectedDir = new File(currentDir,path);
+        
+        System.out.println("DEBUG: SelectedDir " + selectedDir.getPath());
+        
         if(!selectedDir.exists()){
             throw new FileNotFoundException("\"" + selectedDir.getAbsolutePath() + "\" does not exist.");
         }
@@ -96,6 +99,16 @@ public class FileManager{
     
     // file methods:
     
+    /**
+     * This method extracts the metadata from an audio file at a given path.
+     * 
+     * @param path The path of the desired file, relative to the current working directory.
+     * @return A String containing the metadata such as title and artist.
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException 
+     */
     public String getInfo(String path) throws FileNotFoundException, IOException, SAXException, TikaException {
         File file = new File(currentDir, path);
         String info = "";
@@ -128,6 +141,11 @@ public class FileManager{
         return info;
     }
     
+    /**
+     * This method will play the file at a given path using the operating system's default application.
+     * @param path The path to the desired file, relative to the current working directory.s
+     * @throws IOException 
+     */
     public void play(String path) throws IOException{
         File file = new File(currentDir, path);  
         if(!file.exists()){
@@ -148,8 +166,54 @@ public class FileManager{
         }
     }
     
-    public List<File> find(Matcher matcher) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    /**
+     * Searches the current directory, and recursively any directories that it encounters on the way, for files matching the criteria.
+     * Returns a file if and only if the criteria String is found in either it's name, or meta-data.
+     * 
+     * @param criteria
+     * @return A list of files matching the criterion.
+     * @throws IOException
+     * @throws FileNotFoundException
+     * @throws SAXException
+     * @throws TikaException 
+     */
+    public List<File> find(String criteria) throws IOException, FileNotFoundException, SAXException, TikaException {
+        String regex = criteria;
+        Pattern pattern = Pattern.compile(regex);
+        
+        List<File> results = new ArrayList<>();
+        
+        recursiveFind(pattern, results);
+        return results;
+    }
+    
+    private void recursiveFind(Pattern pattern, List<File> results) throws IOException, FileNotFoundException, SAXException, TikaException{
+        
+        String[] items = currentDir.list();
+                
+        for(String item : items){
+            File file = new File(currentDir, item);
+            if(file.isFile()){
+                // check if the file matches the search.
+                Matcher nameMatcher = pattern.matcher(file.getName());
+                Matcher metadataMatcher = pattern.matcher(getInfo(item));
+                
+                if(nameMatcher.find() || metadataMatcher.find()){
+                    results.add(file);
+                }
+            }
+            else
+            if(file.isDirectory()){
+                //try again with the next directory.
+                
+                File currentDirSave = new File(currentDir.getPath());
+                currentDir = file;
+                recursiveFind(pattern,results);
+               
+                currentDir = currentDirSave; //revert to old current dir.
+            }
+        }
+        
     }
     
     
@@ -172,7 +236,7 @@ public class FileManager{
 
     
     public void DEBUG_print(){
-        System.out.println(currentDir.getAbsolutePath());
+        System.out.println(currentDir.getPath());
         //System.out.println(Arrays.toString(currentDir.list()));
     }
 
