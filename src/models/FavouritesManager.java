@@ -5,13 +5,13 @@
  */
 package models;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,7 +19,7 @@ import java.util.Set;
  */
 public class FavouritesManager implements Serializable {
     
-    private final Set<File> favourites;
+    private Set<File> favourites;
     private final File storage;
 
     public FavouritesManager(String storage){
@@ -30,12 +30,12 @@ public class FavouritesManager implements Serializable {
         loadFavourites();
     }
     
-    public void addFavourite(File file) throws IOException{
+    public void addFavourite(File file){
         favourites.add(file);
         saveFavourites();
     }
     
-    public void removeFavourite(File file) throws IOException{
+    public void removeFavourite(File file){
         favourites.remove(file);
         saveFavourites();
     }
@@ -44,11 +44,35 @@ public class FavouritesManager implements Serializable {
         return new ArrayList<>(favourites);
     }
     
-    private void saveFavourites() throws IOException{
-        this.storage.createNewFile();
+    private void saveFavourites(){
+        
+        try {
+            this.storage.createNewFile();
+        } catch (IOException ex) {
+            Logger.getLogger(FavouritesManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try(    FileOutputStream fos = new FileOutputStream(storage);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);) {
+
+            oos.writeObject(favourites);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FavouritesManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     private void loadFavourites(){
-        
+        if(storage.exists()&&storage.isFile()){
+            try(    FileInputStream fis = new FileInputStream(storage);
+                    ObjectInputStream ois = new ObjectInputStream(fis)  ){
+            
+            favourites = (Set<File>) ois.readObject();
+            
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(FavouritesManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
