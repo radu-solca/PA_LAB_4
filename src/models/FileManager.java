@@ -218,9 +218,19 @@ public class FileManager{
     
     
     // directory/file methods:
-    
+    /**
+     * 
+     * @param path
+     * @return The file at the specified path
+     * @throws FileNotFoundException 
+     */
     public File getFile(String path) throws FileNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        File file = new File(currentDir, path);
+               
+        if(!file.exists()){
+            throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
+        }
+        return file;
     }
         
     
