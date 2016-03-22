@@ -28,13 +28,24 @@ public class FavouritesManager implements Serializable {
         this.storage.createNewFile();
         
         favourites = new ArrayList<>();
+        
+        loadFavourites();
     }
     
     public void addFavourite(File file){
         favourites.add(file);
+        saveFavourites();
     }
     
     public List<File> getFavourites(){
         return new ArrayList<>(favourites);
+    }
+    
+    private void saveFavourites(){
+        
+    }
+    
+    private void loadFavourites(){
+        
     }
 }
