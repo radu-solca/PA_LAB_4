@@ -19,22 +19,19 @@ public class Main {
             fileManager = new FileManager("/audio");
             favouritesManager = new FavouritesManager("/favourites.ser");
             
-            fileManager.DEBUG_print();
-//            fileManager.DEBUG_print();
-            System.out.println(fileManager.list(""));
-//            
-//            System.out.println(fileManager.getInfo("yeah.wav"));
-//            //fileManager.play("yeah.wav");
-//          
-            System.out.println(fileManager.getInfo("/TEST.mp3"));
-            fileManager.DEBUG_print();
-            System.out.println(fileManager.find("Hide & Seek"));
-            fileManager.DEBUG_print();
-                    
+            favouritesManager.addFavourite(fileManager.getFile("boonika.mp3"));
+            System.out.println(favouritesManager.getFavourites());
+            
+            favouritesManager.addFavourite(fileManager.getFile("YEAH/yeah.wav"));
+            System.out.println(favouritesManager.getFavourites());
+            
+            favouritesManager.removeFavourite(fileManager.getFile("boonika.mp3"));
+            System.out.println(favouritesManager.getFavourites());
+            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SAXException | TikaException | IOException ex) {
-        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (/*SAXException | TikaException |*/ IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
