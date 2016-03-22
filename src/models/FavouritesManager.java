@@ -20,13 +20,20 @@ import java.util.logging.Logger;
 public class FavouritesManager implements Serializable {
     
     private Set<File> favourites;
-    private final File storage;
+    private final File favDir;
 
-    public FavouritesManager(String storage){
-        storage = "./" + storage;
-        this.storage = new File(storage);
-        favourites = new HashSet<>();
+    public FavouritesManager(String favDirPath){
+        favDirPath = "./" + favDirPath;
         
+        this.favDir = new File(favDirPath);
+        if(!favDir.exists()||!favDir.isDirectory()){
+            if(!favDir.mkdirs()){
+                IOException ex = new IOException("Could not create directory " + favDir.getAbsolutePath());
+                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        favourites = new HashSet<>();
         loadFavourites();
     }
     
@@ -46,13 +53,14 @@ public class FavouritesManager implements Serializable {
     
     private void saveFavourites(){
         
+        File saveFile = new File(favDir,"/favourites.ser");
         try {
-            this.storage.createNewFile();
+            saveFile.createNewFile();
         } catch (IOException ex) {
             Logger.getLogger(FavouritesManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        try(    FileOutputStream fos = new FileOutputStream(storage);
+        try(    FileOutputStream fos = new FileOutputStream(saveFile);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);) {
 
             oos.writeObject(favourites);
@@ -60,12 +68,13 @@ public class FavouritesManager implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(FavouritesManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
     
     private void loadFavourites(){
-        if(storage.exists()&&storage.isFile()){
-            try(    FileInputStream fis = new FileInputStream(storage);
+        File saveFile = new File(favDir,"/favourites.ser");
+        
+        if(saveFile.exists()&&saveFile.isFile()){
+            try(    FileInputStream fis = new FileInputStream(saveFile);
                     ObjectInputStream ois = new ObjectInputStream(fis)  ){
             
             favourites = (Set<File>) ois.readObject();
