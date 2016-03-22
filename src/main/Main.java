@@ -1,17 +1,20 @@
 package main;
 
-import models.FavouritesManager;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import models.FavManager;
 import models.FileManager;
 
 public class Main {
 
     public static void main(String[] args) {
+        
         FileManager fileManager;
-        FavouritesManager favouritesManager;
-
+        FavManager favouritesManager;
         fileManager = new FileManager("/audio");
-        favouritesManager = new FavouritesManager("/favourites.ser");
-
+        favouritesManager = new FavManager("/favourites");
         System.out.println(favouritesManager.getFavourites());
+        favouritesManager.makeReport();
     }
 }
