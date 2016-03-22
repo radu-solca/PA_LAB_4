@@ -15,7 +15,7 @@ import org.apache.tika.sax.*;
 import org.xml.sax.SAXException;
 
 
-public class FileManager{
+public class FileManager extends AbstractViewableModel{
     
     private File currentDir; //can only be a directory.
 
