@@ -15,9 +15,9 @@ import org.apache.tika.sax.*;
 import org.xml.sax.SAXException;
 
 
-public class FileManager extends AbstractViewableModel{
+public class FileManager{
     
-    private File currentDir; //can only be a directory.
+    private File workDir; //can only be a directory.
 
     /**
      * Initializes the application's working directory with the provided path.
@@ -31,16 +31,19 @@ public class FileManager extends AbstractViewableModel{
         
         path = "./" + path;
         
-        currentDir = new File(path);
-        if(!currentDir.exists()||!currentDir.isDirectory()){
-            if(!currentDir.mkdirs()){
-                IOException ex = new IOException("Could not create directory " + currentDir.getAbsolutePath());
+        workDir = new File(path);
+        if(!workDir.exists()||!workDir.isDirectory()){
+            if(!workDir.mkdirs()){
+                IOException ex = new IOException("Could not create directory " + workDir.getAbsolutePath());
                 Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     } 
     
     // directory methods:
+    public File getWorkDir(){
+        return workDir;
+    }
     
     /**
      * This method changes the current working directory to the path specified.
@@ -52,7 +55,7 @@ public class FileManager extends AbstractViewableModel{
      * @throws FileNotFoundException 
      */
     public void changeDir(String path) throws FileNotFoundException {
-        File aux = new File(currentDir, path);
+        File aux = new File(workDir, path);
         if(!aux.exists()){
             throw new FileNotFoundException("\"" + aux.getAbsolutePath() + "\" does not exist.");
         }
@@ -61,7 +64,7 @@ public class FileManager extends AbstractViewableModel{
             throw new FileNotFoundException("\"" + aux.getAbsolutePath() + "\" is not a directory.");
         }
         else{
-            this.currentDir = aux;
+            this.workDir = aux;
         }
     }
     
@@ -79,7 +82,7 @@ public class FileManager extends AbstractViewableModel{
     public List<File> list(String path) throws FileNotFoundException {
         List<File> list = new ArrayList<>();
         
-        File selectedDir = new File(currentDir,path);
+        File selectedDir = new File(workDir,path);
                 
         if(!selectedDir.exists()){
             throw new FileNotFoundException("\"" + selectedDir.getAbsolutePath() + "\" does not exist.");
@@ -90,7 +93,15 @@ public class FileManager extends AbstractViewableModel{
         }
         else{
             //copy all files in selectedDir that match audioFilenameFilter to list;
-            list.addAll(Arrays.asList(selectedDir.listFiles(audioFilenameFilter)));
+            list.addAll(Arrays.asList(selectedDir.listFiles((File dir, String name) -> {
+                String regex = ".([mM][pP]3|[wW][aA][vV]|[fF][lL][aA][cC])\\z";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(name);
+                
+                File file = new File(dir, name);
+                
+                return matcher.find() || file.isDirectory();
+            })));
         }
         
     return list;    
@@ -107,7 +118,7 @@ public class FileManager extends AbstractViewableModel{
      * @throws FileNotFoundException
      */
     public String getInfo(String path) throws FileNotFoundException{
-        File file = new File(currentDir, path);
+        File file = new File(workDir, path);
         String info = "";
                
         try(FileInputStream inputstream = new FileInputStream(file)) {
@@ -146,7 +157,7 @@ public class FileManager extends AbstractViewableModel{
      * @throws java.io.FileNotFoundException 
      */
     public void play(String path) throws FileNotFoundException{
-        File file = new File(currentDir, path);  
+        File file = new File(workDir, path);  
         if(!file.exists()){
             throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
         }
@@ -188,10 +199,10 @@ public class FileManager extends AbstractViewableModel{
     
     private void recursiveFind(Pattern pattern, List<File> results){
         
-        String[] items = currentDir.list();
+        String[] items = workDir.list();
                 
         for(String item : items){
-            File file = new File(currentDir, item);
+            File file = new File(workDir, item);
             if(file.isFile()){
                 // check if the file matches the search.
                 Matcher nameMatcher = pattern.matcher(file.getName());
@@ -214,11 +225,11 @@ public class FileManager extends AbstractViewableModel{
             if(file.isDirectory()){
                 //try again with the next directory.
                 
-                File currentDirSave = new File(currentDir.getPath());
-                currentDir = file;
+                File currentDirSave = new File(workDir.getPath());
+                workDir = file;
                 recursiveFind(pattern,results);
                
-                currentDir = currentDirSave; //revert to old current dir.
+                workDir = currentDirSave; //revert to old current dir.
             }
         }
         
@@ -233,22 +244,11 @@ public class FileManager extends AbstractViewableModel{
      * @throws FileNotFoundException 
      */
     public File getFile(String path) throws FileNotFoundException{
-        File file = new File(currentDir, path);
+        File file = new File(workDir, path);
                
         if(!file.exists()){
             throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
         }
         return file;
     }
-        
-    
-    //auxiliary methods:
-    
-    private final FilenameFilter audioFilenameFilter = (File dir, String name) -> {
-        String regex = ".([mM][pP]3|[wW][aA][vV]|[fF][lL][aA][cC])\\z";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(name);
-        
-        return matcher.find();
-    };
 }

@@ -15,7 +15,7 @@ import freemarker.template.TemplateException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FavManager extends AbstractViewableModel implements Serializable {
+public class FavManager{
     
     private Set<File> favourites;
     private final File favDir;

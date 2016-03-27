@@ -1,48 +1,31 @@
 package controllers;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import models.FavManager;
 import models.FileManager;
+import views.View;
 
 public class ApplicationController {
     
     private final FileManager fileM;
     private final FavManager favM;
+    private final View view;
     //private View view; TODO
 
-    public ApplicationController(String audioPath, String favouritesPath) {
-        this.fileM = new FileManager(audioPath);
-        this.favM = new FavManager(favouritesPath);
+    public ApplicationController(FileManager fileM, FavManager favM, View view) {
+        this.fileM = fileM;
+        this.favM = favM;
+        this.view = view;
     }
-    
     
     public void start(){
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String input;
-        
-        while(true){
-            try {
-                System.out.print("(" + fileM.getFile("") + ")>");
-                input = reader.readLine();
-                processCommand(input);
-            
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException | UnknownCommandException ex) {
-                Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        view.start(this);
     }
     
     
     
-    private void processCommand(String command) throws UnknownCommandException{
+    public ControllerResponse processCommand(String command){
         String[] aux = command.split(" ");
         command = aux[0];
         String args = aux.length <= 1 ? "" : aux[1];
@@ -51,81 +34,92 @@ public class ApplicationController {
         switch(command){
             
             case "cd":
-                cd(args);
-                break;
+                return cd(args);
             case "list":
-                list(args);
-                break;
+                return list(args);
             case "play":
-                play(args);
-                break;
+                return play(args);
             case "info":
-                info(args);
-                break;
+                return info(args);
             case "find":
-                find(args);
-                break;
+                return find(args);
             case "fav":
-                fav(args);
-                break;
+                return fav(args);
             case "report":
-                report(args);
-                break;
+                return report(args);
             case "exit":
                 System.exit(0);
-                break;
             default:
-                throw new UnknownCommandException("Unknown command: " + command);
+                ControllerResponse response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, new UnknownCommandException("Unknown command: " + command));
+                return response;
         }
     }
     
-    private void cd(String args){
+    private ControllerResponse cd(String args){
+        ControllerResponse response = new ControllerResponse(ControllerResponse.returnTypes.VOID, null);
         try {
             fileM.changeDir(args);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+            response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
     }
         
-    private void list(String args){
+    private ControllerResponse list(String args){
+        ControllerResponse response;
         try {
-            System.out.println(fileM.list(args));
+            response = new ControllerResponse(ControllerResponse.returnTypes.FILE_LIST, fileM.list(args));
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+            response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
     }
     
-    private void play(String args){
+    private ControllerResponse play(String args){
+        ControllerResponse response = new ControllerResponse(ControllerResponse.returnTypes.VOID, null);
         try {
             fileM.play(args);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+            response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
     }
     
-    private void info(String args){
+    private ControllerResponse info(String args){
+        ControllerResponse response;
         try {
-            System.out.println(fileM.getInfo(args));
+            response = new ControllerResponse(ControllerResponse.returnTypes.STRING, fileM.getInfo(args));
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+            response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
     }
     
-    private void find(String args){
-        System.out.println(fileM.find(args));
+    private ControllerResponse find(String args){
+        ControllerResponse response;
+        response = new ControllerResponse(ControllerResponse.returnTypes.FILE_LIST, fileM.find(args));
+        return response;
     }
     
-    private void fav(String args){
+    private ControllerResponse fav(String args){
+        ControllerResponse response = new ControllerResponse(ControllerResponse.returnTypes.VOID, null);
         try {
             File file = fileM.getFile(args);
             favM.addFavourite(file);
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ApplicationController.class.getName()).log(Level.SEVERE, null, ex);
+            response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
     }
     
-    private void report(String args){
+    private ControllerResponse report(String args){
+        ControllerResponse response = new ControllerResponse(ControllerResponse.returnTypes.VOID, null);
         favM.makeReport();
+        return response;
+    }
+    
+    public File getWorkDir(){
+        return fileM.getWorkDir();
     }
 
 }

@@ -5,7 +5,7 @@
  */
 package views;
 
-import models.AbstractViewableModel;
+import controllers.ApplicationController;
 
 /**
  *
@@ -13,5 +13,5 @@ import models.AbstractViewableModel;
  */
 public interface View {
     
-    void update(AbstractViewableModel model);
+    void start(ApplicationController controller);
 }
