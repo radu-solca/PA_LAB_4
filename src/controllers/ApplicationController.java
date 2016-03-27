@@ -11,7 +11,6 @@ public class ApplicationController {
     private final FileManager fileM;
     private final FavManager favM;
     private final View view;
-    //private View view; TODO
 
     public ApplicationController(FileManager fileM, FavManager favM, View view) {
         this.fileM = fileM;
@@ -45,6 +44,8 @@ public class ApplicationController {
                 return find(args);
             case "fav":
                 return fav(args);
+            case "lfav":
+                return lfav(args);
             case "report":
                 return report(args);
             case "exit":
@@ -109,6 +110,12 @@ public class ApplicationController {
         } catch (FileNotFoundException ex) {
             response = new ControllerResponse(ControllerResponse.returnTypes.EXCEPTION, ex);
         }
+        return response;
+    }
+    
+    private ControllerResponse lfav(String args){
+        ControllerResponse response;
+        response = new ControllerResponse(ControllerResponse.returnTypes.FILE_LIST, favM.getFavourites());
         return response;
     }
     

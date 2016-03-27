@@ -2,22 +2,22 @@ package models;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FavManager{
     
-    private Set<File> favourites;
+    private final List<File> favourites;
     private final File favDir;
     private final File favFile;
     private final File reportFile;
@@ -33,15 +33,15 @@ public class FavManager{
             }
         }
         
-        favFile = new File(favDir,"/favourites.ser");
+        favFile = new File(favDir,"/favourites.xml");
         reportFile = new File(favDir,"/report.html");
         
-        favourites = new HashSet<>();
+        favourites = new ArrayList<>();
         loadFavourites();
     }
     
     public void addFavourite(File file){
-        favourites.add(file.getAbsoluteFile());
+        favourites.add(file);
         saveFavourites();
     }
     
@@ -56,6 +56,12 @@ public class FavManager{
     
     private void saveFavourites(){
         
+        List<String> stringFavs = new ArrayList<>();
+        
+        favourites.stream().forEach((File f) -> {
+            stringFavs.add(f.getPath());
+        });
+        
         try {
             favFile.createNewFile();
         } catch (IOException ex) {
@@ -63,9 +69,10 @@ public class FavManager{
         }
         
         try(    FileOutputStream fos = new FileOutputStream(favFile);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);) {
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                XMLEncoder encoder = new XMLEncoder(bos);) {
 
-            oos.writeObject(favourites);
+            encoder.writeObject(stringFavs);
             
         } catch (IOException ex) {
             Logger.getLogger(FavManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -73,17 +80,24 @@ public class FavManager{
     }
     
     private void loadFavourites(){
+        List<String> stringFavs = new ArrayList<>();
         
         if(favFile.exists()&&favFile.isFile()){
             try(    FileInputStream fis = new FileInputStream(favFile);
-                    ObjectInputStream ois = new ObjectInputStream(fis)  ){
+                    BufferedInputStream bis = new BufferedInputStream(fis);
+                    XMLDecoder decoder = new XMLDecoder(bis);){
             
-            favourites = (Set<File>) ois.readObject();
+            stringFavs = (List<String>) decoder.readObject();
             
-            } catch (IOException | ClassNotFoundException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(FavManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        favourites.clear();
+        stringFavs.stream().forEach((String s) -> {
+            favourites.add(new File(s));
+        });
     }
     
     /**
@@ -110,9 +124,17 @@ public class FavManager{
             //Template template = cfg.getTemplate("report_template.html");
             Template template = new Template("templateName", new StringReader(templateString), cfg);
 
+            List<File> cannonicalFavs = new ArrayList<>();
+            favourites.stream().forEach((File f) ->{
+                try {
+                    cannonicalFavs.add(f.getCanonicalFile());
+                } catch (IOException ex) {
+                    Logger.getLogger(FavManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
             
             Map<String, Object> data = new HashMap<>();
-            data.put("favs", favourites);
+            data.put("favs", cannonicalFavs);
 
             Writer reportWriter = new FileWriter(reportFile);
             template.process(data, reportWriter);
