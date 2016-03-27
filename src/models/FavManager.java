@@ -90,11 +90,13 @@ public class FavManager{
      * Writes a html report in favDir/report.html
      */
     public void makeReport(){
+        //File currFile = new File(getClass().getResource("report_template.html").getFile());
+        //System.err.println(currFile);
+        
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
-          
         
         try{
-            cfg.setDirectoryForTemplateLoading(this.favDir);
+            cfg.setClassForTemplateLoading(this.getClass(), "/");
             Template template = cfg.getTemplate("report_template.html");
             
             Map<String, Object> data = new HashMap<>();
