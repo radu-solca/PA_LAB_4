@@ -23,7 +23,7 @@ public class FileManager extends AbstractViewableModel{
      * Initializes the application's working directory with the provided path.
      * Note that the path is relative to the application's root directory.
      * 
-     * If the provided directory does not exist, the function will create it. If this fails, a IOException is thrown.
+     * If the provided directory does not exist, the function will create it.
      * 
      * @param path
      */
@@ -93,17 +93,17 @@ public class FileManager extends AbstractViewableModel{
             list.addAll(Arrays.asList(selectedDir.listFiles(audioFilenameFilter)));
         }
         
-        return list;
+    return list;    
     }
     
     
     // file methods:
     
     /**
-     * This method extracts the metadata from an audio file at a given path.
+     * This method extracts the meta-data from an audio file at a given path.
      * 
      * @param path The path of the desired file, relative to the current working directory.
-     * @return A String containing the metadata such as title and artist.
+     * @return A String containing the meta-data such as title and artist.
      * @throws FileNotFoundException
      */
     public String getInfo(String path) throws FileNotFoundException{
@@ -170,7 +170,7 @@ public class FileManager extends AbstractViewableModel{
     }
     
     /**
-     * Searches the current directory, and recursively any directories that it encounters on the way, for files matching the criteria.
+     * Searches the current directory, and recursively searches any directories that it encounters on the way, for files matching the criteria.
      * Returns a file if and only if the criteria String is found in either it's name, or meta-data.
      * 
      * @param criteria

@@ -41,7 +41,7 @@ public class FavManager extends AbstractViewableModel implements Serializable {
     }
     
     public void addFavourite(File file){
-        favourites.add(file);
+        favourites.add(file.getAbsoluteFile());
         saveFavourites();
     }
     
