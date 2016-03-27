@@ -94,10 +94,22 @@ public class FavManager{
         //System.err.println(currFile);
         
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_23);
-        
+        String templateString = "<html>\n" +
+                                "	<body>\n" +
+                                "		<ul>\n" +
+                                "			<#list favs as fav>\n" +
+                                "			    <li>\n" +
+                                "			    	<a href=\"${fav}\">${fav}</a>\n" +
+                                "			    </li>\n" +
+                                "			</#list>\n" +
+                                "		</ul> \n" +
+                                "	</body>\n" +
+                                "</html>";
         try{
             cfg.setClassForTemplateLoading(this.getClass(), "/");
-            Template template = cfg.getTemplate("report_template.html");
+            //Template template = cfg.getTemplate("report_template.html");
+            Template template = new Template("templateName", new StringReader(templateString), cfg);
+
             
             Map<String, Object> data = new HashMap<>();
             data.put("favs", favourites);
