@@ -128,5 +128,8 @@ public class ApplicationController {
     public File getWorkDir(){
         return fileM.getWorkDir();
     }
+     public File getFavDir(){
+        return favM.getFavDir();
+    }
 
 }

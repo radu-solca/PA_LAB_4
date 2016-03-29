@@ -143,4 +143,8 @@ public class FavManager{
             Logger.getLogger(FavManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public File getFavDir(){
+        return favDir;
+    }
 }

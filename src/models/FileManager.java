@@ -4,7 +4,10 @@ import java.awt.Desktop;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.*;
@@ -117,9 +120,9 @@ public class FileManager{
      * @return A String containing the meta-data such as title and artist.
      * @throws FileNotFoundException
      */
-    public String getInfo(String path) throws FileNotFoundException{
+    public Map<String,String> getInfo(String path) throws FileNotFoundException{
         File file = new File(workDir, path);
-        String info = "";
+        Map<String,String> info = new LinkedHashMap<>();
                
         try(FileInputStream inputstream = new FileInputStream(file)) {
             if(!file.exists()){
@@ -138,12 +141,13 @@ public class FileManager{
 
             parser.parse(inputstream, handler, metadata, context);            
             
-            info += "Title: " + (metadata.get("title") == null ? "N/A" : metadata.get("title")) + "\n";
-            info += "Genre: " + (metadata.get("xmpDM:genre") == null ? "N/A" : metadata.get("xmpDM:genre")) + "\n";
-            info += "Artist: " + (metadata.get("xmpDM:artist") == null ? "N/A" : metadata.get("xmpDM:artist")) + "\n";
-            info += "Album: " + (metadata.get("xmpDM:album") == null ? "N/A" : metadata.get("xmpDM:album")) + "\n";
-            info += "Release Date: " + (metadata.get("xmpDM:releaseDate") == null ? "N/A" : metadata.get("xmpDM:releaseDate")) + "\n";
+            info.put( "title", (metadata.get("title") == null ? "N/A" : metadata.get("title")) + "\n");            
+            info.put( "artist", (metadata.get("xmpDM:artist") == null ? "N/A" : metadata.get("xmpDM:artist")) + "\n");
+            info.put( "album", (metadata.get("xmpDM:album") == null ? "N/A" : metadata.get("xmpDM:album")) + "\n");
+            info.put( "releaseDate", (metadata.get("xmpDM:releaseDate") == null ? "N/A" : metadata.get("xmpDM:releaseDate")) + "\n");
+            info.put( "genre", (metadata.get("xmpDM:genre") == null ? "N/A" : metadata.get("xmpDM:genre")) + "\n");
             
+
         } catch (IOException | SAXException | TikaException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -210,7 +214,7 @@ public class FileManager{
                 
                 String metadata = null;
                 try {
-                    metadata = getInfo(item);
+                    metadata = getInfo(item).toString();
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
