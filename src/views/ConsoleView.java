@@ -35,9 +35,10 @@ public class ConsoleView implements View{
         while(true){
 
             try {
-                System.out.print("[" + controller.getWorkDir() + "] >");
+                System.out.print("\"" + controller.getWorkDir() + "\">");
                 input = reader.readLine();
-                ControllerResponse response = controller.processCommand(input);
+                String[] parsedInput = input.split(input, 2);
+                ControllerResponse response = controller.processCommand(parsedInput[0],parsedInput[1]);
                 handleResponse(response);
             } catch (IOException ex) {
                 Logger.getLogger(ConsoleView.class.getName()).log(Level.SEVERE, null, ex);

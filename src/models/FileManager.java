@@ -58,7 +58,10 @@ public class FileManager{
      * @throws FileNotFoundException 
      */
     public void changeDir(String path) throws FileNotFoundException {
-        File aux = new File(workDir, path);
+        File aux = new File(path);
+        if(!aux.isAbsolute())
+            aux = new File(workDir, path);
+        
         if(!aux.exists()){
             throw new FileNotFoundException("\"" + aux.getAbsolutePath() + "\" does not exist.");
         }
@@ -85,7 +88,9 @@ public class FileManager{
     public List<File> list(String path) throws FileNotFoundException {
         List<File> list = new ArrayList<>();
         
-        File selectedDir = new File(workDir,path);
+        File selectedDir = new File(path);
+        if(!selectedDir.isAbsolute())
+            selectedDir = new File(workDir, path);
                 
         if(!selectedDir.exists()){
             throw new FileNotFoundException("\"" + selectedDir.getAbsolutePath() + "\" does not exist.");
@@ -121,7 +126,10 @@ public class FileManager{
      * @throws FileNotFoundException
      */
     public Map<String,String> getInfo(String path) throws FileNotFoundException{
-        File file = new File(workDir, path);
+        File file = new File(path);
+        if(!file.isAbsolute())
+            file = new File(workDir, path);
+        
         Map<String,String> info = new LinkedHashMap<>();
                
         try(FileInputStream inputstream = new FileInputStream(file)) {
@@ -141,11 +149,11 @@ public class FileManager{
 
             parser.parse(inputstream, handler, metadata, context);            
             
-            info.put( "title", (metadata.get("title") == null ? "N/A" : metadata.get("title")) + "\n");            
-            info.put( "artist", (metadata.get("xmpDM:artist") == null ? "N/A" : metadata.get("xmpDM:artist")) + "\n");
-            info.put( "album", (metadata.get("xmpDM:album") == null ? "N/A" : metadata.get("xmpDM:album")) + "\n");
-            info.put( "releaseDate", (metadata.get("xmpDM:releaseDate") == null ? "N/A" : metadata.get("xmpDM:releaseDate")) + "\n");
-            info.put( "genre", (metadata.get("xmpDM:genre") == null ? "N/A" : metadata.get("xmpDM:genre")) + "\n");
+            info.put( "title", (metadata.get("title") == null ? "N/A" : metadata.get("title")));            
+            info.put( "artist", (metadata.get("xmpDM:artist") == null ? "N/A" : metadata.get("xmpDM:artist")));
+            info.put( "album", (metadata.get("xmpDM:album") == null ? "N/A" : metadata.get("xmpDM:album")));
+            info.put( "releaseDate", (metadata.get("xmpDM:releaseDate") == null ? "N/A" : metadata.get("xmpDM:releaseDate")));
+            info.put( "genre", (metadata.get("xmpDM:genre") == null ? "N/A" : metadata.get("xmpDM:genre")));
             
 
         } catch (IOException | SAXException | TikaException ex) {
@@ -161,7 +169,11 @@ public class FileManager{
      * @throws java.io.FileNotFoundException 
      */
     public void play(String path) throws FileNotFoundException{
-        File file = new File(workDir, path);  
+        File file = new File(path);
+        if(!file.isAbsolute())
+            file = new File(workDir, path);  
+        
+        
         if(!file.exists()){
             throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");
         }
@@ -248,7 +260,9 @@ public class FileManager{
      * @throws FileNotFoundException 
      */
     public File getFile(String path) throws FileNotFoundException{
-        File file = new File(workDir, path);
+        File file = new File(path);
+        if(!file.isAbsolute())
+            file = new File(workDir, path);
                
         if(!file.exists()){
             throw new FileNotFoundException("\"" + file.getAbsolutePath() + "\" does not exist.");

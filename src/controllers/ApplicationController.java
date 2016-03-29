@@ -24,10 +24,10 @@ public class ApplicationController {
     
     
     
-    public ControllerResponse processCommand(String command){
-        String[] aux = command.split(" ");
-        command = aux[0];
-        String args = aux.length <= 1 ? "" : aux[1];
+    public ControllerResponse processCommand(String command, String args){
+//        String[] aux = command.split(" ");
+//        command = aux[0];
+//        String args = aux.length <= 1 ? "" : aux[1];
         
         
         switch(command){
