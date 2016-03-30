@@ -26,7 +26,10 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 
-
+/**
+ *
+ * @author Radu
+ */
 public class GUIView extends JFrame implements View, TreeSelectionListener{
 
     private ApplicationController controller;
@@ -37,6 +40,10 @@ public class GUIView extends JFrame implements View, TreeSelectionListener{
     private JTable dirTable;
     private JLabel fileLabel;
     
+    /**
+     *
+     * @param controller
+     */
     @Override
     public void start(ApplicationController controller){
         this.controller = controller;

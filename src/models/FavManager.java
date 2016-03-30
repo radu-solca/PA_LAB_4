@@ -15,6 +15,10 @@ import java.beans.XMLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * @author Radu
+ */
 public class FavManager{
     
     private final List<File> favourites;
@@ -22,6 +26,10 @@ public class FavManager{
     private final File favFile;
     private final File reportFile;
 
+    /**
+     *
+     * @param favDirPath
+     */
     public FavManager(String favDirPath){
         favDirPath = "./" + favDirPath;
         
@@ -40,16 +48,28 @@ public class FavManager{
         loadFavourites();
     }
     
+    /**
+     *
+     * @param file
+     */
     public void addFavourite(File file){
         favourites.add(file);
         saveFavourites();
     }
     
+    /**
+     *
+     * @param file
+     */
     public void removeFavourite(File file){
         favourites.remove(file);
         saveFavourites();
     }
     
+    /**
+     *
+     * @return
+     */
     public List<File> getFavourites(){
         return new ArrayList<>(favourites);
     }
@@ -144,6 +164,10 @@ public class FavManager{
         }
     }
     
+    /**
+     *
+     * @return
+     */
     public File getFavDir(){
         return favDir;
     }

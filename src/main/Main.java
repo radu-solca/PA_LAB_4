@@ -7,8 +7,16 @@ import views.ConsoleView;
 import views.View;
 import views.GUIView;
 
+/**
+ *
+ * @author Radu
+ */
 public class Main {
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         
         FileManager fileM = new FileManager("audio");

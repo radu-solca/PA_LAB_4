@@ -17,7 +17,10 @@ import org.apache.tika.parser.*;
 import org.apache.tika.sax.*;
 import org.xml.sax.SAXException;
 
-
+/**
+ *
+ * @author Radu
+ */
 public class FileManager{
     
     private File workDir; //can only be a directory.
@@ -44,6 +47,11 @@ public class FileManager{
     } 
     
     // directory methods:
+
+    /**
+     *
+     * @return
+     */
     public File getWorkDir(){
         return workDir;
     }

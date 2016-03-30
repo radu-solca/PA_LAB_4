@@ -25,6 +25,10 @@ public class ConsoleView implements View{
 
     private ApplicationController controller;
     
+    /**
+     *
+     * @param controller
+     */
     @Override
     public void start(ApplicationController controller) {
         this.controller = controller;

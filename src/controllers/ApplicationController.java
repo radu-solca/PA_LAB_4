@@ -6,24 +6,41 @@ import models.FavManager;
 import models.FileManager;
 import views.View;
 
+/**
+ *
+ * @author Radu
+ */
 public class ApplicationController {
     
     private final FileManager fileM;
     private final FavManager favM;
     private final View view;
 
+    /**
+     *
+     * @param fileM
+     * @param favM
+     * @param view
+     */
     public ApplicationController(FileManager fileM, FavManager favM, View view) {
         this.fileM = fileM;
         this.favM = favM;
         this.view = view;
     }
     
+    /**
+     *
+     */
     public void start(){
         view.start(this);
     }
     
-    
-    
+    /**
+     *
+     * @param command
+     * @param args
+     * @return
+     */
     public ControllerResponse processCommand(String command, String args){
 //        String[] aux = command.split(" ");
 //        command = aux[0];
@@ -125,10 +142,19 @@ public class ApplicationController {
         return response;
     }
     
+    /**
+     *
+     * @return
+     */
     public File getWorkDir(){
         return fileM.getWorkDir();
     }
-     public File getFavDir(){
+
+    /**
+     *
+     * @return
+     */
+    public File getFavDir(){
         return favM.getFavDir();
     }
 

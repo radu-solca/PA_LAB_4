@@ -14,6 +14,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class Node extends DefaultMutableTreeNode{
     String name;
     
+    /**
+     *
+     * @param newName
+     */
     public void setName(String newName){
         this.name = newName;
     }

@@ -13,5 +13,9 @@ import controllers.ApplicationController;
  */
 public interface View {
     
+    /**
+     *
+     * @param controller
+     */
     void start(ApplicationController controller);
 }
