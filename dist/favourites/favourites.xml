@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_73" class="java.beans.XMLDecoder">
+ <object class="java.util.ArrayList">
+  <void method="add">
+   <string>D:\SCOALA\PA\PA_LAB_4\dist\audio\boonika.flac</string>
+  </void>
+  <void method="add">
+   <string>D:\SCOALA\PA\PA_LAB_4\dist\audio\TEST.mp3</string>
+  </void>
+ </object>
+</java>
