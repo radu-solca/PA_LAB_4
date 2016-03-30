@@ -7,5 +7,14 @@
   <void method="add">
    <string>.\audio\TEST.mp3</string>
   </void>
+  <void method="add">
+   <string>D:\SCOALA\PA\PA_LAB_4\audio\TEST.flac</string>
+  </void>
+  <void method="add">
+   <string>D:\SCOALA\PA\PA_LAB_4\audio\boonika.mp3</string>
+  </void>
+  <void method="add">
+   <string>D:\SCOALA\PA\PA_LAB_4\audio\whoops.wav</string>
+  </void>
  </object>
 </java>

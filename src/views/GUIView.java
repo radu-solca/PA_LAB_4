@@ -6,6 +6,11 @@
 package views;
 
 import controllers.ApplicationController;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +30,7 @@ public class GUIView extends JFrame implements View, TreeSelectionListener{
     private JScrollPane leftPane;
     private JScrollPane rightPane;
     private JTree fileTree;
+    private final TreePopupMenu popup = new TreePopupMenu();
     private JTable dirTable;
     private JLabel fileLabel;
     
@@ -82,6 +88,7 @@ public class GUIView extends JFrame implements View, TreeSelectionListener{
             tree.setCellRenderer(new SystemIconRenderer());
             
             tree.addTreeSelectionListener(this);
+            tree.addMouseListener(mouseListener);
             
             return tree;
         } catch (IOException ex) {
@@ -188,4 +195,66 @@ public class GUIView extends JFrame implements View, TreeSelectionListener{
         JTable table = new JTable(tempData, tempNames);
         return table;
     }
+    
+    
+    //listeners:
+    private final MouseListener mouseListener = new MouseAdapter() {
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            
+            //int selRow = fileTree.getRowForLocation(e.getX(), e.getY());
+            
+            
+            TreePath selPath = fileTree.getPathForLocation(e.getX(), e.getY());
+            if(selPath != null){
+                System.out.println(selPath);
+
+                File subject = (File)((Node)selPath.getLastPathComponent()).getUserObject();
+                if(e.getButton() == MouseEvent.BUTTON3 && subject.isFile()){
+                    System.out.println("Detected Mouse Right Click!");
+
+                    popup.setSubject(subject);
+                    popup.show(leftPane, e.getX(), e.getY());
+
+                }
+            }
+        }
+    };
+    
+    private class TreePopupMenu extends JPopupMenu{
+
+    private File subject;
+    public void setSubject(File subject){
+        this.subject = subject;
+    }
+    
+    public TreePopupMenu() {
+        JMenuItem addFav = new JMenuItem("Add to favourites");
+        JMenuItem play = new JMenuItem("Play");
+        JMenuItem search = new JMenuItem("Search on the web");
+        
+        addFav.addActionListener((ActionEvent e) -> {
+            controller.processCommand("fav", subject.getAbsolutePath());
+            fileTree = buildTree();
+            leftPane.setViewportView(fileTree);
+        });
+        
+        this.add(addFav);
+        
+        play.addActionListener((ActionEvent e) -> {
+            controller.processCommand("play", subject.getAbsolutePath());
+        });
+        
+        this.add(play);
+        
+        search.addActionListener((ActionEvent e) -> {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        });
+        
+        this.add(search);
+    }
+    
+    
+}
 }
